@@ -202,7 +202,7 @@ full = full %>%
   mutate(fft = fft(sample.data.full)) %>%
   mutate(amp = sqrt(((Re(fft)^2) + (Im(fft)^2)) / n())) %>%
   slice(1:(n()/2)) %>%
-  mutate(frequencySpec = row_number() * delf) %>%
+  mutate(frequencies = row_number() * delf) %>%
   mutate(amp = (amp * 2) / (sensitivity * mu0 * row_number() * delf * 2 * pi)) %>%
   slice(periods*row_number()+1) %>%
   mutate(har = seq.int(n())) %>%
