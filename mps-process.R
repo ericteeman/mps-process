@@ -1,6 +1,6 @@
 # Options -----------------------------------------------------------------
 
-display.psf = "no"
+display.psf = "yes"
 export.data = "no"
 export.plots = "no"
 export.grid = "no"
@@ -26,11 +26,7 @@ scientific_10 <- function(x) {
 }
 
 read.lvm <- function(flnm) {
-  read.csv(
-    flnm,
-    skip = 35,
-    sep = "\t",
-    header = F,
+  read.csv(flnm, skip = 35, sep = "\t", header = F,
     col.names = c("background.time","background.data", "sample.time", "sample.data", "psf.time","psf.data", 
                   "field.time","field.data","na","peakToPeak", "sample.time.full","sample.data.full", "comment"
     )
@@ -44,11 +40,7 @@ read.lvm <- function(flnm) {
 }
 
 read.lvm.full <- function(flnm) {
-  read.csv(
-    flnm,
-    skip = 35,
-    sep = "\t",
-    header = F,
+  read.csv(flnm, skip = 35, sep = "\t", header = F,
     col.names = c("background.time","background.data", "sample.time", "sample.data", "psf.time","psf.data", 
                   "field.time","field.data","na","peakToPeak", "sample.time.full","sample.data.full", "comment"
     )
@@ -61,44 +53,16 @@ read.lvm.full <- function(flnm) {
     # rename(time = sample.time.full) %>%
 }
 
-read.lvm.field <- function(flnm) {
-  read.csv(
-    flnm,
-    skip = 35,
-    nrow = 1,
-    sep = "\t",
-    header = F
-  )
-}
+read.lvm.field <- function(flnm) { read.csv( flnm, skip = 35, nrow = 1, sep = "\t", header = F) }
 
-read.lvm.param <- function(flnm) {
-  read.csv(
-    flnm,
-    skip = 24,
-    nrow = 1,
-    sep = "\t",
-    header = F
-  )
-}
+read.lvm.param <- function(flnm) { read.csv(flnm, skip = 24, nrow = 1, sep = "\t", header = F) }
+
+read.conc <- function(flnm) { read.csv(flnm, header = FALSE, skip = 0) }
 
 # Import data -------------------------------------------------------------
 
 setwd("/Users/ericteeman/Google Drive/Research/Data/MPS/Notebook 3/")
 setwd(rchoose.dir(caption = "Select Directory")) # Asks user to choose directory containing data files
-
-if (file.exists("conc.txt")) {
-  conc.file <- read.csv(
-    list.files(all.files = TRUE,
-      no.. = TRUE,
-      pattern = "conc.txt",
-      full.names = TRUE
-    )[1],
-    header = FALSE,
-    skip = 0
-  )
-  conc <- conc.file[, 1]
-} else
-  conc <- 0 #mgFe/mL
 
 dat <- list.files(pattern = "*\\d.lvm", full.names = T, recursive = F) %>% map_df(~ read.lvm(.))
 full <- list.files(pattern = "*\\d.lvm", full.names = T, recursive = F) %>% map_df(~ read.lvm.full(.))
@@ -120,24 +84,22 @@ periods = mean(param$V14)
 field.amplitude = mean(field$V10) / 2 #* 1000 # mT
 vol <- 150 #uL
 
-# Normalize raw data by concentration (if available)
-if (conc != 0) {
+if (file.exists("conc.txt")) {
+  conc <- list.files(pattern = "conc.txt", full.names = T, recursive = F) %>% 
+    map_df(~ read.conc(.))
+  conc <- conc[, 1] #mgFe/mL
   conc.new = conc / 1000 #gFe/mL
   vol.new = vol / 1000 #mL
   mass = conc.new * vol.new #gFe
-  # psf.m3["fwdpsf"] = psf.m3["fwdpsf"] / mass
-  # psf.m3["revpsf"] = psf.m3["revpsf"] / mass
-  # har.am2$intensity = har.am2$intensity / mass
   psf.label = expression(paste(chi, " [m" ^ "3", "gFe" ^ "-1", "]"))
   har.label = expression(paste("Amplitude [Am" ^ "2", "gFe" ^ "-1", "]"))
-}
-
-if (conc == 0) {
-  conc.new = conc
-  vol.new = vol
+} else {
+  conc <- 0 #mgFe/mL
+  mass <- 1 #filler value to prevent conversion without known conc
   psf.label = expression(paste(chi, " [m" ^ "3", "]"))
   har.label = expression(paste("Amplitude [Am" ^ "2", "]"))
 }
+
 
 # Interpolate data points in primary data set
 int = 7000
@@ -169,6 +131,7 @@ dat = dat %>%
   mutate(psf.m3 = psf.data / -(sensitivity * field.amplitude * omega * sin(omega * (
     time + coef(model)
   )))) %>%
+  mutate(psf.m3 = psf.m3 / mass) %>%
   dplyr::filter(row_number() <= (n() / 2)) %>%
   dplyr::filter(field.data >= 0.99 * min(field.data) &
                   field.data <= 0.99 * max(field.data)) %>%
@@ -263,7 +226,7 @@ p2 = ggplot(data.set) +
 
 
 xlab = expression(paste("H [mT", mu[0] ^ -1, "]"))
-ylab = expression(paste(chi, " [m" ^ "3", "]"))
+ylab = psf.label
 
 p3 = ggplot(data.set) +
   geom_line(aes(x = field.fitted, y = psf.m3, group = direction, color = direction), size = 1) +
@@ -335,7 +298,7 @@ har.subset = seq(1, 37, 2)
 data.set <- full %>% dplyr::filter(har %in% har.subset)
 
 xlab = "Harmonic"
-ylab = "Amplitude [a.u.]"
+ylab = har.label
 # , breaks = c(seq(5,10,5) %o% 10^(-20:20))
 
 p6 = ggplot(data.set) +
