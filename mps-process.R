@@ -81,7 +81,7 @@ frequency = mean(param$V2) # Hz
 omega = 2 * pi * frequency # Hz
 sample.rate = mean(param$V4)
 periods = mean(param$V14)
-field.amplitude = mean(field$V10) / 2 #* 1000 # mT
+field.amplitude = mean(field$V10) / 2 # mT
 vol <- 150 #uL
 
 if (file.exists("conc.txt")) {
@@ -325,7 +325,7 @@ p6 = ggplot(data.set) +
 
 # Set export directory whether or not saving images is selected
 main.directory = getwd()
-export.directory = "Export"
+export.directory = "export"
 dir.create(file.path(main.directory, export.directory), showWarnings = FALSE)
 setwd(file.path(main.directory, export.directory))
 
