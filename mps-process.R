@@ -1,8 +1,8 @@
 # Options -----------------------------------------------------------------
 
-display.psf = "yes"
-export.data = "no"
-export.plots = "no"
+display.psf = "no"
+export.data = "yes"
+export.plots = "yes"
 export.grid = "no"
 
 # Import packages ---------------------------------------------------------
@@ -147,15 +147,14 @@ dat = dat %>%
                             direction == "forward" ~ mh.norm)) %>%
   mutate(mh.norm = 2 * ((mh.norm-min(mh.norm))/(max(mh.norm)-min(mh.norm))) - 1) %>%
   ungroup() %>%
-  mutate(har = seq.int(n()) - 1) %>%            #shift to correct index
+  mutate(har = seq.int(n()) - 1) %>%        #shift to correct index
   mutate(amp = abs(fft(mh.norm)) ) %>%      #fft
   mutate(amp = amp / n()) %>%
-  mutate(amp = amp * har) %>%                 #adjusts harmonic intensities to be consistent with exp data
+  # mutate(amp = amp * har) %>%               #adjusts harmonic intensities to be consistent with exp data
   mutate(fifthThird = amp[har == 5] / amp[har == 3])
   
 
-
-full = full %>% 
+full = full1 %>%
   group_by(position) %>%
   summarise_all(mean)
 
@@ -171,6 +170,12 @@ full = full %>%
   mutate(har = seq.int(n())) %>%
   mutate(oddeven = case_when(har %% 2 != 0 ~ "odd",
                              har %% 2 == 0 ~ "even"))
+
+# mutate(mh.norm = cumsum(sample.data.full)) %>%
+#   mutate(amp = abs(fft(mh.norm))) %>%
+#   mutate(har = seq.int(n())) %>%
+#   dplyr::filter(har %in% har.subset) %>%
+#   slice(row_number()*65)
 
 
 # Plots -------------------------------------------------------------------
