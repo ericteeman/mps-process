@@ -2,7 +2,7 @@
 
 display.psf = "no"
 export.data = "yes"
-export.plots = "yes"
+export.plots = "no"
 export.grid = "no"
 
 # Import packages ---------------------------------------------------------
@@ -61,7 +61,7 @@ read.conc <- function(flnm) { read.csv(flnm, header = FALSE, skip = 0) }
 
 # Import data -------------------------------------------------------------
 
-setwd("/Users/ericteeman/Google Drive/Research/Data/MPS/Notebook 3/")
+setwd("/Users/ericteeman/Google Drive/Research/Data/MPS/Improving in vitro MPS/Initial/3-171")
 setwd(rchoose.dir(caption = "Select Directory")) # Asks user to choose directory containing data files
 
 dat <- list.files(pattern = "*\\d.lvm", full.names = T, recursive = F) %>% map_df(~ read.lvm(.))
@@ -149,12 +149,12 @@ dat = dat %>%
   ungroup() %>%
   mutate(har = seq.int(n()) - 1) %>%        #shift to correct index
   mutate(amp = abs(fft(mh.norm)) ) %>%      #fft
-  mutate(amp = amp / n()) %>%
+  # mutate(amp = amp / n()) %>%
   # mutate(amp = amp * har) %>%               #adjusts harmonic intensities to be consistent with exp data
   mutate(fifthThird = amp[har == 5] / amp[har == 3])
   
 
-full = full1 %>%
+full = full %>%
   group_by(position) %>%
   summarise_all(mean)
 
@@ -170,6 +170,9 @@ full = full %>%
   mutate(har = seq.int(n())) %>%
   mutate(oddeven = case_when(har %% 2 != 0 ~ "odd",
                              har %% 2 == 0 ~ "even"))
+
+dat <- dat %>%
+  mutate(fifthThird = full$amp[full$har == 5] / full$amp[full$har == 3])
 
 # mutate(mh.norm = cumsum(sample.data.full)) %>%
 #   mutate(amp = abs(fft(mh.norm))) %>%
@@ -337,7 +340,7 @@ setwd(file.path(main.directory, export.directory))
 sc = 1    # Set scaling for saved images
 
 if(export.data == "yes"){
-  processed.data = dat %>% select(field.fitted, psf.m3, psf.norm, mh.norm, direction)
+  processed.data = dat %>% select(field.fitted, psf.m3, psf.norm, mh.norm, direction, fwhm, fifthThird)
   write.csv(processed.data, "processed.csv", row.names = FALSE)
 }
 
