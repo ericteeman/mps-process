@@ -61,8 +61,10 @@ read.conc <- function(flnm) { read.csv(flnm, header = FALSE, skip = 0) }
 
 # Import data -------------------------------------------------------------
 
-setwd("/Users/ericteeman/Google Drive/Research/Data/MPS/Improving in vitro MPS/Initial/3-171")
+setwd("/Users/ericteeman/Google Drive/Research/Data/MPS/Improving in vitro MPS/")
 setwd(rchoose.dir(caption = "Select Directory")) # Asks user to choose directory containing data files
+
+nfiles <- length(list.files(pattern = "*\\d.lvm", full.names = T, recursive = F))
 
 dat <- list.files(pattern = "*\\d.lvm", full.names = T, recursive = F) %>% map_df(~ read.lvm(.))
 full <- list.files(pattern = "*\\d.lvm", full.names = T, recursive = F) %>% map_df(~ read.lvm.full(.))
@@ -105,7 +107,7 @@ if (file.exists("conc.txt")) {
 int = 7000
 
 dat = dat %>%
-  dplyr::filter(row_number() <= (n() / 3)) %>%
+  dplyr::filter(row_number() <= (n() / nfiles)) %>%
   add_row(., time = approx(.$time,n = int - nrow(.))$y) %>%
   arrange(time) %>%
   mutate(., field.data = approx(.$field.data, n = nrow(.))$y) %>%
