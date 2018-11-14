@@ -61,8 +61,14 @@ read.conc <- function(flnm) { read.csv(flnm, header = FALSE, skip = 0) }
 
 # Import data -------------------------------------------------------------
 
-setwd("/Users/ericteeman/Google Drive/Research/Data/MPS/Improving in vitro MPS/Initial/3-171")
+<<<<<<< HEAD
+setwd("/Users/ericteeman/Google Drive/Research/Data/MPS")
+=======
+setwd("/Users/ericteeman/Google Drive/Research/Data/MPS/Improving in vitro MPS/")
+>>>>>>> ee45f614482f02ed28b57a42212f703e18a6fbcf
 setwd(rchoose.dir(caption = "Select Directory")) # Asks user to choose directory containing data files
+
+nfiles <- length(list.files(pattern = "*\\d.lvm", full.names = T, recursive = F))
 
 dat <- list.files(pattern = "*\\d.lvm", full.names = T, recursive = F) %>% map_df(~ read.lvm(.))
 full <- list.files(pattern = "*\\d.lvm", full.names = T, recursive = F) %>% map_df(~ read.lvm.full(.))
@@ -82,7 +88,7 @@ omega = 2 * pi * frequency # Hz
 sample.rate = mean(param$V4)
 periods = mean(param$V14)
 field.amplitude = mean(field$V10) / 2 # mT
-vol <- 150 #uL
+vol <- 100 #uL
 
 if (file.exists("conc.txt")) {
   conc <- list.files(pattern = "conc.txt", full.names = T, recursive = F) %>% 
@@ -105,7 +111,7 @@ if (file.exists("conc.txt")) {
 int = 7000
 
 dat = dat %>%
-  dplyr::filter(row_number() <= (n() / 3)) %>%
+  dplyr::filter(row_number() <= (n() / nfiles)) %>%
   add_row(., time = approx(.$time,n = int - nrow(.))$y) %>%
   arrange(time) %>%
   mutate(., field.data = approx(.$field.data, n = nrow(.))$y) %>%
@@ -195,12 +201,12 @@ p1 = ggplot(data.set) +
   scale_y_continuous(breaks = waiver()) +
   theme_bw() +
   theme(
-    axis.text.x = element_text(size = 15, margin = margin(t = 12)),
-    axis.text.y = element_text(size = 15, margin = margin(r = 12)),
-    axis.title = element_text(size = 20),
+    axis.text.x = element_text(size = 14, margin = margin(t = 12)),
+    axis.text.y = element_text(size = 14, margin = margin(r = 12)),
+    axis.title = element_text(size = 16),
     axis.ticks.length = unit(-8, "pt"),
     panel.grid = element_blank(),
-    panel.border = element_rect(size = 0.75, color = "black"),
+    panel.border = element_rect(size = 1, color = "black"),
     legend.position = c(0.98, 0.98),
     legend.justification = c("right", "top"),
     legend.text = element_text(size = 10)
@@ -218,15 +224,14 @@ p2 = ggplot(data.set) +
   scale_y_continuous(breaks = waiver()) +
   theme_bw() +
   theme(
-    axis.text.x = element_text(size = 15, margin = margin(t = 12)),
-    axis.text.y = element_text(size = 15, margin = margin(r = 12)),
-    axis.title = element_text(size = 20),
+    axis.text.x = element_text(size = 14, margin = margin(t = 12)),
+    axis.text.y = element_text(size = 14, margin = margin(r = 12)),
+    axis.title = element_text(size = 16),
     axis.ticks.length = unit(-8, "pt"),
     panel.grid = element_blank(),
-    panel.border = element_rect(size = 0.75, color = "black"),
+    panel.border = element_rect(size = 1, color = "black"),
     legend.position = c(0.02, 0.98),
     legend.justification = c("left", "top"),
-    legend.title = element_blank(),
     legend.text = element_text(size = 10)
   ) +
   guides(col = guide_legend(ncol = 1)) +
@@ -243,12 +248,12 @@ p3 = ggplot(data.set) +
   scale_y_continuous(labels = scientific_10_full) +
   theme_bw() +
   theme(
-    axis.text.x = element_text(size = 15, margin = margin(t = 12)),
-    axis.text.y = element_text(size = 15, margin = margin(r = 12)),
-    axis.title = element_text(size = 20),
+    axis.text.x = element_text(size = 14, margin = margin(t = 12)),
+    axis.text.y = element_text(size = 14, margin = margin(r = 12)),
+    axis.title = element_text(size = 16),
     axis.ticks.length = unit(-8, "pt"),
     panel.grid = element_blank(),
-    panel.border = element_rect(size = 0.75, color = "black"),
+    panel.border = element_rect(size = 1, color = "black"),
     legend.position = c(0.98, 0.98),
     legend.justification = c("right", "top"),
     legend.title = element_blank(),
@@ -267,12 +272,12 @@ p4 = ggplot(data.set) +
   scale_y_continuous(breaks = waiver()) +
   theme_bw() +
   theme(
-    axis.text.x = element_text(size = 15, margin = margin(t = 12)),
-    axis.text.y = element_text(size = 15, margin = margin(r = 12)),
-    axis.title = element_text(size = 20),
+    axis.text.x = element_text(size = 14, margin = margin(t = 12)),
+    axis.text.y = element_text(size = 14, margin = margin(r = 12)),
+    axis.title = element_text(size = 16),
     axis.ticks.length = unit(-8, "pt"),
     panel.grid = element_blank(),
-    panel.border = element_rect(size = 0.75, color = "black"),
+    panel.border = element_rect(size = 1, color = "black"),
     legend.position = c(0.98, 0.98),
     legend.justification = c("right", "top"),
     legend.title = element_blank(),
@@ -340,8 +345,10 @@ setwd(file.path(main.directory, export.directory))
 sc = 1    # Set scaling for saved images
 
 if(export.data == "yes"){
-  processed.data = dat %>% select(field.fitted, psf.m3, psf.norm, mh.norm, direction, fwhm, fifthThird)
+  processed.data <- dat %>% select(field.fitted, psf.m3, psf.norm, mh.norm, direction, fwhm, fifthThird)
   write.csv(processed.data, "processed.csv", row.names = FALSE)
+  processed.har <- full %>% select(har,amp) %>% dplyr::filter(har %in% har.subset)
+  write.csv(processed.har,"odd harmonics.csv", row.names = FALSE)
 }
 
 if(export.plots == "yes"){
