@@ -61,15 +61,9 @@ read.conc <- function(flnm) { read.csv(flnm, header = FALSE, skip = 0) }
 
 # Import data -------------------------------------------------------------
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 setwd("/Users/ericteeman/Google Drive/Research/Data/MPS")
-=======
+
 setwd("/Users/ericteeman/Google Drive/Research/Data/MPS/Improving in vitro MPS/")
->>>>>>> ee45f614482f02ed28b57a42212f703e18a6fbcf
-=======
-setwd("/Users/ericteeman/Google Drive/Research/Data/MPS/Improving in vitro MPS/")
->>>>>>> ee45f614482f02ed28b57a42212f703e18a6fbcf
 setwd(rchoose.dir(caption = "Select Directory")) # Asks user to choose directory containing data files
 
 nfiles <- length(list.files(pattern = "*\\d.lvm", full.names = T, recursive = F))
