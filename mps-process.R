@@ -1,6 +1,6 @@
 # Options -----------------------------------------------------------------
 
-display.psf = "no"
+display.psf = "yes"
 export.data = "yes"
 export.plots = "no"
 export.grid = "no"
@@ -137,15 +137,16 @@ dat = dat %>%
   )))) %>%
   mutate(psf.m3 = psf.m3 / mass) %>%
   dplyr::filter(row_number() <= (n() / 2)) %>%
-  dplyr::filter(field.data >= 0.99 * min(field.data) &
-                  field.data <= 0.99 * max(field.data)) %>%
+  dplyr::filter(field.data >= 0.9 * min(field.data) &
+                  field.data <= 0.9 * max(field.data)) %>%
   mutate(field.data = round(field.data * 1000, 4)) %>%
   mutate(field.fitted = round(field.fitted * 1000, 4)) %>%
   mutate(psf.norm = psf.m3/max(psf.m3)) %>%
   mutate(direction = case_when(row_number() <= (n() / 2) ~ "forward", 
                                row_number() > (n() / 2) ~ "reverse")) %>%
   group_by(direction) %>%
-  mutate(fwhm = field.fitted[field.fitted > field.fitted[psf.m3 == max(psf.m3)]][which.min(abs(psf.m3[field.fitted > field.fitted[psf.m3 == max(psf.m3)]] - max(psf.m3) / 2))] - field.fitted[field.fitted < field.fitted[psf.m3 == max(psf.m3)]][which.min(abs(psf.m3[field.fitted < field.fitted[psf.m3 == max(psf.m3)]] - max(psf.m3) / 2))]) %>%
+  # mutate(fwhm = field.fitted[field.fitted > field.fitted[psf.m3 == max(psf.m3)]][which.min(abs(psf.m3[field.fitted > field.fitted[psf.m3 == max(psf.m3)]] - max(psf.m3) / 2))] - field.fitted[field.fitted < field.fitted[psf.m3 == max(psf.m3)]][which.min(abs(psf.m3[field.fitted < field.fitted[psf.m3 == max(psf.m3)]] - max(psf.m3) / 2))]) %>%
+  mutate(fwhm = 1) %>%
   mutate(mh.norm = cumsum(psf.m3)) %>%
   mutate(mh.norm = case_when(direction == "reverse" ~ max(mh.norm) - mh.norm,
                             direction == "forward" ~ mh.norm)) %>%
@@ -350,16 +351,16 @@ if(export.data == "yes"){
 }
 
 if(export.plots == "yes"){
-  ggsave("raw-data.png", p2, width = 6 * sc, height = 4.5 * sc, dpi = 300)
-  ggsave("psf-m3.png", p3, width = 6 * sc, height = 4.5 * sc, dpi = 300)
-  ggsave("psf-norm.png", p4, width = 6 * sc, height = 4.5 * sc, dpi = 300)
-  ggsave("mh-norm.png", p5, width = 6 * sc, height = 4.5 * sc, dpi = 300)
-  ggsave("harmonics.png", p6, width = 6 * sc, height = 4.5 * sc, dpi = 300)
+  ggsave("raw-data.png", p2, width = 6 * sc, height = 4.5 * sc, dpi = "retina")
+  ggsave("psf-m3.png", p3, width = 6 * sc, height = 4.5 * sc, dpi = "retina")
+  ggsave("psf-norm.png", p4, width = 6 * sc, height = 4.5 * sc, dpi = "retina")
+  ggsave("mh-norm.png", p5, width = 6 * sc, height = 4.5 * sc, dpi = "retina")
+  ggsave("harmonics.png", p6, width = 6 * sc, height = 4.5 * sc, dpi = "retina")
 }
 
 if(export.grid == "yes"){
   grid <- ggarrange(p1, p2, p3, p4, p5, p6, ncol = 2, nrow = 3)
-  ggsave("all-plot.png", grid, width = 8.5 * sc, heigh = 11 * sc, dpi = 300)
+  ggsave("all-plot.png", grid, width = 8.5 * sc, heigh = 11 * sc, dpi = "retina")
 }
 
 if (display.psf == "yes"){
