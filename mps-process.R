@@ -1,6 +1,6 @@
 # Options -----------------------------------------------------------------
 
-display.psf = "yes"
+display.psf = "no"
 export.data = "yes"
 export.plots = "no"
 export.grid = "no"
@@ -63,7 +63,6 @@ read.conc <- function(flnm) { read.csv(flnm, header = FALSE, skip = 0) }
 
 setwd("/Users/ericteeman/Google Drive/Research/Data/MPS")
 
-setwd("/Users/ericteeman/Google Drive/Research/Data/MPS/Improving in vitro MPS/")
 setwd(rchoose.dir(caption = "Select Directory")) # Asks user to choose directory containing data files
 
 nfiles <- length(list.files(pattern = "*\\d.lvm", full.names = T, recursive = F))
@@ -86,7 +85,7 @@ omega = 2 * pi * frequency # Hz
 sample.rate = mean(param$V4)
 periods = mean(param$V14)
 field.amplitude = mean(field$V10) / 2 # mT
-vol <- 100 #uL
+vol <- 150 #uL
 
 if (file.exists("conc.txt")) {
   conc <- list.files(pattern = "conc.txt", full.names = T, recursive = F) %>% 
