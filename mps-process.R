@@ -61,7 +61,7 @@ read.conc <- function(flnm) { read.csv(flnm, header = FALSE, skip = 0) }
 
 # Import data -------------------------------------------------------------
 
-setwd("/Users/ericteeman/Google Drive/Research/Data/MPS")
+setwd("/Users/ericteeman/Google Drive/Research/Data/MPS/")
 
 setwd(rchoose.dir(caption = "Select Directory")) # Asks user to choose directory containing data files
 
@@ -236,7 +236,7 @@ p2 = ggplot(data.set) +
   labs(x = xlab, y = ylab)
 
 
-xlab = expression(paste("H [mT", mu[0] ^ -1, "]"))
+xlab = expression(paste(mu[0],"H [mT]"))
 ylab = psf.label
 
 p3 = ggplot(data.set) +
