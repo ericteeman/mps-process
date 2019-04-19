@@ -3,7 +3,7 @@
 display.psf = "no"
 display.har = "no"
 export.data = "yes"
-export.plots = "no"
+export.plots = "yes"
 export.grid = "no"
 
 # Import packages ---------------------------------------------------------
@@ -146,9 +146,9 @@ dat = dat %>%
   mutate(direction = case_when(row_number() <= (n() / 2) ~ "forward", 
                                row_number() > (n() / 2) ~ "reverse")) %>%
   group_by(direction) %>%
-  # mutate(fwhm = case_when( length(field.fitted[field.fitted > field.fitted[psf.m3 == max(psf.m3)]][which.min(abs(psf.m3[field.fitted > field.fitted[psf.m3 == max(psf.m3)]] - max(psf.m3) / 2))] - field.fitted[field.fitted < field.fitted[psf.m3 == max(psf.m3)]][which.min(abs(psf.m3[field.fitted < field.fitted[psf.m3 == max(psf.m3)]] - max(psf.m3) / 2))]) == 0 ~ 1,
-  #                          length(field.fitted[field.fitted > field.fitted[psf.m3 == max(psf.m3)]][which.min(abs(psf.m3[field.fitted > field.fitted[psf.m3 == max(psf.m3)]] - max(psf.m3) / 2))] - field.fitted[field.fitted < field.fitted[psf.m3 == max(psf.m3)]][which.min(abs(psf.m3[field.fitted < field.fitted[psf.m3 == max(psf.m3)]] - max(psf.m3) / 2))]) >= 1 ~ field.fitted[field.fitted > field.fitted[psf.m3 == max(psf.m3)]][which.min(abs(psf.m3[field.fitted > field.fitted[psf.m3 == max(psf.m3)]] - max(psf.m3) / 2))] - field.fitted[field.fitted < field.fitted[psf.m3 == max(psf.m3)]][which.min(abs(psf.m3[field.fitted < field.fitted[psf.m3 == max(psf.m3)]] - max(psf.m3) / 2))])) %>%
-  mutate(fwhm = 1) %>%
+  mutate(fwhm = case_when( length(field.fitted[field.fitted > field.fitted[psf.m3 == max(psf.m3)]][which.min(abs(psf.m3[field.fitted > field.fitted[psf.m3 == max(psf.m3)]] - max(psf.m3) / 2))] - field.fitted[field.fitted < field.fitted[psf.m3 == max(psf.m3)]][which.min(abs(psf.m3[field.fitted < field.fitted[psf.m3 == max(psf.m3)]] - max(psf.m3) / 2))]) == 0 ~ 1,
+                           length(field.fitted[field.fitted > field.fitted[psf.m3 == max(psf.m3)]][which.min(abs(psf.m3[field.fitted > field.fitted[psf.m3 == max(psf.m3)]] - max(psf.m3) / 2))] - field.fitted[field.fitted < field.fitted[psf.m3 == max(psf.m3)]][which.min(abs(psf.m3[field.fitted < field.fitted[psf.m3 == max(psf.m3)]] - max(psf.m3) / 2))]) >= 1 ~ field.fitted[field.fitted > field.fitted[psf.m3 == max(psf.m3)]][which.min(abs(psf.m3[field.fitted > field.fitted[psf.m3 == max(psf.m3)]] - max(psf.m3) / 2))] - field.fitted[field.fitted < field.fitted[psf.m3 == max(psf.m3)]][which.min(abs(psf.m3[field.fitted < field.fitted[psf.m3 == max(psf.m3)]] - max(psf.m3) / 2))])) %>%
+  # mutate(fwhm = 1) %>%
   mutate(mh.norm = cumsum(psf.m3)) %>%
   mutate(mh.norm = case_when(direction == "reverse" ~ max(mh.norm) - mh.norm,
                             direction == "forward" ~ mh.norm)) %>%
@@ -328,8 +328,8 @@ if(export.data == "yes"){
 }
 
 if(export.plots == "yes"){
-  ggsave("field-data.png", p1, width = 4.5 * sc, height = 4 * sc, dpi = "retina")
-  ggsave("raw-data.png", p2, width = 4.5 * sc, height = 4 * sc, dpi = "retina")
+  # ggsave("field-data.png", p1, width = 4.5 * sc, height = 4 * sc, dpi = "retina")
+  # ggsave("raw-data.png", p2, width = 4.5 * sc, height = 4 * sc, dpi = "retina")
   ggsave("psf-m3.png", p3, width = 4.5 * sc, height = 4 * sc, dpi = "retina")
   ggsave("psf-norm.png", p4, width = 4.5 * sc, height = 4. * sc, dpi = "retina")
   ggsave("mh-norm.png", p5, width = 4.5 * sc, height = 4 * sc, dpi = "retina")
