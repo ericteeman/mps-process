@@ -3,8 +3,8 @@
 display.psf = "no"
 display.har = "no"
 export.data = "yes"
-export.plots = "yes"
-export.grid = "no"
+export.plots = "no"
+export.grid = "yes"
 
 # Import packages ---------------------------------------------------------
 
@@ -194,24 +194,26 @@ dat <- dat %>%
 
 # Plots -------------------------------------------------------------------
 
-theme_new <- function (base_size=24, base_line_size = 1) {
+theme_new <- function (base_size=24, base_line_size=1) {
   theme_bw(base_size=base_size,
            base_family="") %+replace%
     theme(
-      axis.text.x = element_text(size = base_size, margin = margin(t = 0.5*base_size)),
-      axis.text.y = element_text(size = base_size, margin = margin(r = 0.5*base_size)),
-      axis.title = element_text(size = base_size+2),
-      axis.ticks.length = unit(-8, "pt"),
-      panel.border = element_rect(size = base_line_size, fill=NA),
-      panel.grid = element_blank(),
-      legend.background = element_rect(fill="transparent", colour=NA),
-      legend.position = c(0.01, 0.99),
-      legend.justification = c("left", "top"),
-      legend.direction = "vertical",
-      legend.title = element_blank(),
-      legend.title.align = 0.5,
-      legend.text = element_text(size = base_size-4),
-      legend.text.align = 0.5
+      axis.text.x = element_text(size=base_size, margin = margin(t=0.75*base_size,b=0.25*base_size), color="black"),
+      axis.text.y = element_text(size=base_size, margin=margin(r=0.75*base_size,l=0.25*base_size), color="black"),
+      axis.title=element_text(size=base_size, color="black"),
+      axis.line=element_line(size=base_line_size, lineend="square", color="black"),
+      axis.ticks=element_line(size=base_line_size, lineend="square", color="black"),
+      axis.ticks.length=unit(-8, "pt"),
+      panel.border=element_blank(),
+      panel.grid=element_blank(),
+      legend.background=element_rect(fill="transparent", colour=NA),
+      legend.position=c(0, 1),
+      legend.justification=c("left", "top"),
+      legend.direction="vertical",
+      legend.title=element_blank(),
+      legend.title.align=0.5,
+      legend.text=element_text(size=0.75*base_size),
+      legend.text.align=0
     )
 }
 
@@ -307,7 +309,7 @@ p6 = ggplot(data.set) +
   geom_errorbar(aes(x = har, ymin=amp_mean-amp_sd, ymax=amp_mean+amp_sd), width=.5, position=position_dodge(.9)) +
   scale_x_continuous(breaks = pretty_breaks(n=3), limits = c(xmin,xmax)) +
   scale_y_log10(labels = scales::trans_format("log10", scales::math_format(10^.x)), limits = c(ymin,ymax)) +
-  annotation_logticks(sides = "l") +
+  annotation_logticks(sides = "l", size = 0.75) +
   theme_new() +
   guides(col = guide_legend(ncol = 3)) +
   labs(x = xlab, y = ylab)
