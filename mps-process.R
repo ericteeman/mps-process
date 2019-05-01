@@ -3,8 +3,8 @@
 display.psf = "no"
 display.har = "no"
 export.data = "yes"
-export.plots = "no"
-export.grid = "yes"
+export.plots = "yes"
+export.grid = "no"
 
 # Import packages ---------------------------------------------------------
 
@@ -206,6 +206,7 @@ theme_new <- function (base_size=24, base_line_size=1) {
       axis.ticks.length=unit(-8, "pt"),
       panel.border=element_blank(),
       panel.grid=element_blank(),
+      aspect.ratio = 1,
       legend.background=element_rect(fill="transparent", colour=NA),
       legend.position=c(0, 1),
       legend.justification=c("left", "top"),
