@@ -3,8 +3,8 @@
 display.psf = "no"
 display.har = "no"
 export.data = "yes"
-export.plots = "yes"
-export.grid = "no"
+export.plots = "no"
+export.grid = "yes"
 
 # Import packages ---------------------------------------------------------
 
@@ -63,8 +63,6 @@ read.conc <- function(flnm) { read.csv(flnm, header = FALSE, skip = 0) }
 # Import data -------------------------------------------------------------
 
 setwd("/Users/ericteeman/Google Drive/Research/Data/MPS/")
-# setwd("/Users/ericteeman/Google Drive/Research/Data/MPS/Cell Internalization/20170801/1X")
-
 setwd(rchoose.dir(caption = "Select Directory")) # Asks user to choose directory containing data files
 
 nfiles <- length(list.files(pattern = "*\\d.lvm", full.names = T, recursive = F))
@@ -294,7 +292,7 @@ p5 = ggplot(data.set) +
   guides(col = guide_legend(ncol = 1)) +
   labs(x = xlab, y = ylab)
 
-har.subset = seq(1, 37, 2)
+har.subset = seq(1, 37, 1)
 
 data.set <- full %>% dplyr::filter(har %in% har.subset)
 
@@ -306,12 +304,14 @@ ymin = min(data.set$amp_mean) - 0.1*max(data.set$amp_mean)
 ymax = max(data.set$amp_mean) + 0.1*max(data.set$amp_mean)
 
 p6 = ggplot(data.set) +
-  geom_point(aes(x = har, y = amp_mean), shape = 1, size = 3) +
+  geom_point(aes(x = har, y = amp_mean, shape = oddeven), size = 3, stroke = 1) +
   geom_errorbar(aes(x = har, ymin=amp_mean-amp_sd, ymax=amp_mean+amp_sd), width=.5, position=position_dodge(.9)) +
   scale_x_continuous(breaks = pretty_breaks(n=3), limits = c(xmin,xmax)) +
   scale_y_log10(labels = scales::trans_format("log10", scales::math_format(10^.x)), limits = c(ymin,ymax)) +
+  scale_shape_manual(breaks = c("odd", "even"), values = c(2,1)) +
   annotation_logticks(sides = "l", size = 0.75) +
   theme_new() +
+  theme(legend.position = c(1,1), legend.justification = c("right", "top")) +
   guides(col = guide_legend(ncol = 3)) +
   labs(x = xlab, y = ylab)
 
@@ -331,19 +331,19 @@ if(export.data == "yes"){
 }
 
 if(export.plots == "yes"){
-  # ggsave("field-data.png", p1, width = 4.5 * sc, height = 4 * sc, dpi = "retina")
-  # ggsave("raw-data.png", p2, width = 4.5 * sc, height = 4 * sc, dpi = "retina")
-  ggsave("psf-m3.png", p3, width = 4.5 * sc, height = 4 * sc, dpi = "retina")
-  ggsave("psf-norm.png", p4, width = 4.5 * sc, height = 4. * sc, dpi = "retina")
-  ggsave("mh-norm.png", p5, width = 4.5 * sc, height = 4 * sc, dpi = "retina")
-  ggsave("harmonics.png", p6, width = 4.5 * sc, height = 4 * sc, dpi = "retina")
+  # ggsave("field-data.png", p1, width = 4.5, height = 4.5, dpi = "retina")
+  # ggsave("raw-data.png", p2, width = 4.5, height = 4.5, dpi = "retina")
+  ggsave("psf-m3.png", p3, width = 4.5, height = 4.5, dpi = "retina")
+  ggsave("psf-norm.png", p4, width = 4.5, height = 4.5, dpi = "retina")
+  ggsave("mh-norm.png", p5, width = 4.5, height = 4.5, dpi = "retina")
+  ggsave("harmonics.png", p6, width = 4.5, height = 4.5, dpi = "retina")
 }
 
 if(export.grid == "yes"){
   combined <- ggarrange(p2, p3, p5, p6, hjust = -0.25,
                         labels = c("(a)", "(b)", "(c)", "(d)"), font.label = list(size = 24),
                         ncol = 2, nrow = 2)
-  ggsave("combined.png", combined, width = 9 * sc, height = 8 * sc, dpi = "retina")
+  ggsave("combined.png", combined, width = 9, height = 9, dpi = "retina")
 }
 
 if (display.psf == "yes"){
